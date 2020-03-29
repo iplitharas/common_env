@@ -10,6 +10,14 @@ MAIN_BASHRC_ROOT=$(dirname $(readlink -f "${MAIN_BASHRC}"))
 source "${MAIN_BASHRC_ROOT}/system.sh"
 current_shell="$(system_get_current_shell)"
 
+# Check the shell used
+if [ "$current_shell" = "bash" ] || [ "$current_shell" = "zsh" ]; then
+  :
+else
+  echo "Unsupported shell '$current_shell', exiting." >&2
+  return 1
+fi
+
 # If current shell is BASH
 if [ "$current_shell" = "bash" ]; then
   source "${MAIN_BASHRC_ROOT}/path.sh"
@@ -21,6 +29,8 @@ if [ "$current_shell" = "bash" ]; then
       echo "ERROR !!! You are are not sourcing with bash, you might encounter problem !!!" >&2
     fi
 
+    export WIN_APPS_ROOT="$(echo "$APPS_ROOT" | cut -b 2 | tr '[:lower:]' '[:upper:]'):$(echo "$APPS_ROOT" | cut -b 3-)"
+    export WINDOWS_APPS_ROOT="$(echo "$WIN_APPS_ROOT" | tr '/' '\\')"
     export MSYS_SHELL=$APPS_ROOT/PortableApps/CommonFiles/msys64/msys2_shell.cmd
 
     pathAppend "${APPS_ROOT}/PortableApps/CommonFiles/msys64/mingw64/bin" 2>/dev/null
@@ -69,9 +79,6 @@ if [ "$current_shell" = "bash" ]; then
 # If current shell is ZSH
 elif [ "$current_shell" = "zsh" ]; then
   source "${MAIN_BASHRC_ROOT}/path_zsh.sh"
-else
-  echo "Unsupported shell '$current_shell', exiting." >&2
-  return 1
 fi
 
 # Function to update git repo

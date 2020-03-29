@@ -37,9 +37,30 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
+      # Check OS
+      - name: Check OS
+        run: |
+          uname -a
+          echo "  * uname -m: $(uname -m)"
+          echo "  * uname -n: $(uname -n)"
+          echo "  * uname -p: $(uname -p)"
+          echo "  * uname -r: $(uname -r)"
+          echo "  * uname -s: $(uname -s)"
+          echo "  * uname -v: $(uname -v)"
       # Check system on Linux and Mac
       - name: Check system on Linux and Mac
         if: runner.os == 'Linux' || runner.os == 'macOs'
+        run: |
+          source tools/bash/source/system.sh
+          echo "  * Current system: $(system_get_os)"
+          echo "  * Current shell: $(system_get_current_shell)"
+          echo "  * Installed shells:"
+          system_get_shells
+          echo "  * Current shell info:"
+          system_display_shell_info
+      # Check system with bash
+      - name: Check system with bash
+        shell: bash
         run: |
           source tools/bash/source/system.sh
           echo "  * Current system: $(system_get_os)"
